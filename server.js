@@ -1,41 +1,105 @@
 const express = require("express");
-const mysql = require("mysql2");
+const mysql = require("mysql2/promise");
 const app = express();
 const port = 3000;
 const net = require("net");
 
 app.use(express.static("public"));
+app.use(express.json());
 
-const connection = mysql.createConnection({
-  host: "127.0.0.1",
-  user: "root",
-  password: "joshuaw6",
-  database: "in453",
-});
+let connection = null;
 
-connection.connect((err) => {
-  if (err) throw err;
-  console.log("Connected to MySQL");
-});
-
-app.get("/api/rowcount", (req, res) => {
-  connection.query(
-    "SELECT COUNT(*) as count FROM network_traffic",
-    (err, results) => {
-      if (err) return res.status(500).send(err);
-      res.json({ count: results[0].count });
+async function closeConnection() {
+  if (connection) {
+    try {
+      await connection.end();
+      console.log("Previous database connection closed.");
+    } catch (err) {
+      console.error("Error closing previous connection:", err);
     }
-  );
+    connection = null;
+  }
+}
+
+app.post("/api/connect", async (req, res) => {
+  const { server, database, user, password } = req.body;
+
+  await closeConnection();
+
+  try {
+    connection = await mysql.createConnection({
+      host: server,
+      user,
+      password,
+      database,
+    });
+    console.log("Connected to MySQL as", user);
+    res.json({ message: "Connected successfully" });
+  } catch (err) {
+    console.error("Database connection failed:", err);
+    connection = null;
+    res
+      .status(500)
+      .json({ error: err.message || "Database connection failed" });
+  }
 });
 
-app.get("/api/names", (req, res) => {
-  connection.query(
-    'SELECT CONCAT(first_name, " ", last_name) as FullName FROM users',
-    (err, results) => {
-      if (err) return res.status(500).send(err);
-      res.json(results.map((row) => row.FullName));
-    }
-  );
+app.post("/api/logout", async (req, res) => {
+  try {
+    await closeConnection();
+    res.json({ message: "Logged out successfully" });
+  } catch (err) {
+    console.error("Logout failed:", err);
+    res.status(500).json({ error: "Failed to close connection" });
+  }
+});
+
+app.get("/api/rowcount/a", async (req, res) => {
+  if (!connection) {
+    return res.status(500).json({ error: "Not connected to database" });
+  }
+
+  try {
+    const [results] = await connection.query(
+      "SELECT COUNT(*) as count FROM network_traffic"
+    );
+    res.json({ count: results[0].count });
+  } catch (err) {
+    console.error("MySQL Error:", err);
+    res.status(500).json({ error: err.sqlMessage || "Query failed" });
+  }
+});
+
+app.get("/api/rowcount/c", async (req, res) => {
+  if (!connection) {
+    return res.status(500).json({ error: "Not connected to database" });
+  }
+
+  try {
+    const [results] = await connection.query(
+      "SELECT COUNT(*) as count FROM applications"
+    );
+    res.json({ count: results[0].count });
+  } catch (err) {
+    console.error("MySQL Error:", err);
+    res.status(500).json({ error: err.sqlMessage || "Query failed" });
+  }
+});
+
+app.get("/api/names", async (req, res) => {
+  if (!connection) {
+    return res.status(500).json({ error: "Not connected to database" });
+  }
+
+  try {
+    const [results] = await connection.query(
+      'SELECT CONCAT(first_name, " ", last_name) as FullName FROM users'
+    );
+    res.json(results.map((row) => row.FullName));
+  } catch (err) {
+    console.error("MySQL Error:", err);
+    res.status(500).json({ error: err.sqlMessage || "Query failed" });
+  }
 });
 
 function findAvailablePort(port, callback) {
@@ -44,7 +108,7 @@ function findAvailablePort(port, callback) {
   server.once("error", (err) => {
     if (err.code === "EADDRINUSE") {
       console.log(`Port ${port} is in use, trying ${port + 1}...`);
-      findAvailablePort(port + 1, callback); // Try the next port
+      findAvailablePort(port + 1, callback);
     } else {
       callback(null);
     }

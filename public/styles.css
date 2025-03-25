@@ -1,4 +1,161 @@
+/* Reset defaults and set a modern font */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
 body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
+  background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3d 100%);
+  color: #ffffff;
+  min-height: 100vh;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Title styling */
+.title {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #00d4ff;
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+}
+
+/* Login form styling */
+.login-form {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 30px;
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+  color: #e0e0e0;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: none;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 8px rgba(0, 212, 255, 0.5);
+}
+
+/* Button styling */
+.btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: #00d4ff;
+  color: #1e1e2f;
+  width: 100%;
+}
+
+.btn-primary:hover {
+  background: #00b4d8;
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.7);
+}
+
+.btn-secondary {
+  background: #ff4d4d;
+  color: #ffffff;
+  margin-top: 10px;
+}
+
+.btn-secondary:hover {
+  background: #e63939;
+  box-shadow: 0 0 15px rgba(255, 77, 77, 0.7);
+}
+
+/* User greeting */
+.user-greeting {
+  font-size: 1.5rem;
+  margin: 20px 0;
+  color: #ffd700;
+  text-align: center;
+}
+
+/* Data section styling */
+.data-section {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 30px;
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+  width: 100%;
+  max-width: 600px;
+}
+
+.section-title {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #00d4ff;
+  text-align: center;
+}
+
+.subtitle {
+  font-size: 1.5rem;
+  margin: 15px 0 10px;
+  color: #e0e0e0;
+}
+
+.data-output {
+  font-size: 1.2rem;
+  color: #ffffff;
+  padding: 10px;
+  background: rgba(0, 212, 255, 0.1);
+  border-radius: 5px;
+}
+
+.names-list {
+  list-style: none;
+  padding: 0;
+}
+
+.names-list li {
+  font-size: 1.1rem;
+  padding: 10px;
+  margin: 5px 0;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.names-list li:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateX(5px);
+}
+
+/* Error states (optional, for red text from your JS error handling) */
+.data-output:empty::before,
+.names-list li:empty::before {
+  content: "No data available";
+  color: #ff4d4d;
 }

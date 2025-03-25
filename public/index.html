@@ -3,15 +3,47 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>IN453 Data</title>
+    <title>IN453 Login</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <h1>IN453 Data</h1>
-    <button id="getData">Get Data</button>
-    <p id="rowCount"></p>
-    <h2>Names:</h2>
-    <ul id="namesList"></ul>
+    <h1 class="title">Database Login</h1>
+    <form id="loginForm" class="login-form">
+      <label class="form-label"
+        >Server:
+        <input type="text" id="server" class="form-input" required /></label
+      ><br />
+      <label class="form-label"
+        >Database:
+        <input type="text" id="database" class="form-input" required /></label
+      ><br />
+      <label class="form-label"
+        >User:
+        <input type="text" id="user" class="form-input" required /></label
+      ><br />
+      <label class="form-label"
+        >Password:
+        <input
+          type="password"
+          id="password"
+          class="form-input"
+          required /></label
+      ><br />
+      <button type="submit" class="btn btn-primary">Connect</button>
+    </form>
+    <button id="logout" class="btn btn-secondary" style="display: none">
+      Logout
+    </button>
+    <div id="user_name" class="user-greeting"></div>
+    <div id="dataSection" class="data-section" style="display: none">
+      <h1 class="section-title">IN453 Data</h1>
+      <h2 class="subtitle">Row Count for network traffic / IN453A:</h2>
+      <p id="rowCountA" class="data-output"></p>
+      <h2 class="subtitle">Row Count for applications / IN453C:</h2>
+      <p id="rowCountC" class="data-output"></p>
+      <h2 class="subtitle">Names:</h2>
+      <ul id="namesList" class="names-list"></ul>
+    </div>
     <script src="script.js"></script>
   </body>
 </html>
