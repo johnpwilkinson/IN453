@@ -10,24 +10,31 @@ document
     const user = document.getElementById("user").value;
     const password = document.getElementById("password").value;
 
+
+    const serverRegex = /^[a-zA-Z0-9.-]+$/; // Alphanumeric, dots, hyphens
+    const dbRegex = /^[a-zA-Z0-9_]+$/; // Alphanumeric, underscores
+    const userRegex = /^[a-zA-Z0-9_]+$/; // Alphanumeric, underscores
+    if (!serverRegex.test(server) || !dbRegex.test(database) || !userRegex.test(user)) {
+        alert("Invalid input format. Use only alphanumeric characters, dots, or hyphens.");
+        return;
+    }
+    
     connectionConfig = { server, database, user, password };
 
     try {
       const response = await fetch("/api/connect", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(connectionConfig),
-      });
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Connection failed");
-      }
-
-      document.getElementById("user_name").textContent =
-        user.length > 0 ? "Hello " + user : "";
-      document.getElementById("dataSection").style.display = "block";
-      document.getElementById("loginForm").style.display = "none";
-      document.getElementById("logout").style.display = "block";
+        body: JSON.stringify({ server, database, user, password }),
+        credentials: 'include' // Include cookies
+    });
+    if (response.ok) {
+        sessionStorage.setItem('sessionToken', (await response.json()).token);
+        document.getElementById("user_name").textContent = user ? `Hello ${user}` : "";
+        document.getElementById("dataSection").style.display = "block";
+        document.getElementById("loginForm").style.display = "none";
+        document.getElementById("logout").style.display = "block";
+    }
 
       await fetchRowCountA();
       await fetchRowCountC();
@@ -106,6 +113,12 @@ async function fetchRowCountC() {
   }
 }
 
+function escapeHTML(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
 async function fetchUserNames() {
   const namesList = document.getElementById("namesList");
   namesList.innerHTML = "";
@@ -120,7 +133,7 @@ async function fetchUserNames() {
 
     namesData.forEach((name) => {
       const li = document.createElement("li");
-      li.textContent = name;
+      li.innerHTML = escapeHTML(name); // Escape output
       namesList.appendChild(li);
     });
   } catch (error) {
